@@ -1,11 +1,11 @@
-const http = require('http');
+import http from 'node:http';
+import { makeApp} from './app.js';
+
 const PORT = process.env.PORT || 8080;
 
-const server = http.createServer((req, res) => {
-    res.writeHead(200, {'Content-Type': 'text/plain'});
-    res.end('Hello World!\n');
-})
+const handler = makeApp()
+const server = http.createServer(handler)
 
 server.listen(PORT, () => {
-    console.log(`server is running on port ${PORT}`)
+  console.log(`server is running on port ${PORT}`)
 })

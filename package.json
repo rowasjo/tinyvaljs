@@ -1,9 +1,13 @@
 {
     "name": "tinyvaljs",
     "version": "0.1.0",
+    "type": "module",
     "description": "Hash table service for storing and retrieving binary blobs using their SHA-256 hashes as keys.",
     "main": "index.js",
     "scripts": {
         "start": "node index.js"
+    },
+    "engines": {
+        "node": ">=22.0.0"
     }
 }
