@@ -5,8 +5,8 @@ import { readFileSync } from 'fs'
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const swaggeruiHtml = readFileSync(join(__dirname, 'swaggerui.html'), 'utf8');
-const openapiYaml = readFileSync(join(__dirname, '../../openapi.yaml'), 'utf8');
+export const swaggeruiHtml = readFileSync(join(__dirname, 'swaggerui.html'), 'utf8');
+export const openapiYaml = readFileSync(join(__dirname, '../../openapi.yaml'), 'utf8');
 
 const headerContentType = 'Content-Type'
 

@@ -8,10 +8,7 @@ test('returns 404 for invalid path', (t) => {
 
   const req = { 
     method: 'GET',
-    url: '/bad/path',
-    headers: {
-      host: 'localhost'
-    }
+    url: '/bad/path'
   };
   const res = makeResponseRecorder()
 

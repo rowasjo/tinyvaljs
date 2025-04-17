@@ -13,7 +13,7 @@ export function makeRouter() {
       routes.sort((a, b) => b.urlPattern.pathname.length - a.urlPattern.pathname.length)
     },
     dispatch(req, res) {
-      const url = new URL(req.url, `http://${req.headers.host}`)
+      const url = new URL(req.url, `http://localhost`)
       for (const { method, urlPattern, handler } of routes) {
         if (req.method === method && urlPattern.test({ pathname: url.pathname })) {
           req.params = urlPattern.exec({ pathname: url.pathname }).pathname.groups
