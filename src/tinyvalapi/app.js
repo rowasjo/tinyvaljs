@@ -1,4 +1,4 @@
-import { makeRouter } from './router.js'
+import { makeRouter } from '../lib/router.js'
 import { addRoutes } from './routes.js'
 
 export function makeApp() {
