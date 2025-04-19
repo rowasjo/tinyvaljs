@@ -80,7 +80,6 @@ export class DiskRepository {
         throw new HashMismatchError(hash, actual);
       }
 
-
       // Flush file data + metadata to the device
       const fh = await fs.promises.open(tmpPath, 'r');
       await fh.sync();

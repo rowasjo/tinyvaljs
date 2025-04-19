@@ -6,14 +6,11 @@ import path from 'node:path'
 import stream from 'node:stream'
 
 import { DiskRepository, NotFoundError, HashMismatchError } from '../src/lib/repository.js'
+import { tmpDir } from './utils/fixtures.js'
 
 const EXAMPLE_KEY = 'bfb272e79d30466cf1af7c16739659e8b4e9b85b5075bdb922806c55035497cf';
 const EXAMPLE_VALUE = 'I am a little blob.';
 const EXAMPLE_SIZE = 19;
-
-function tmpDir() {
-  return fs.mkdtemp(path.join(os.tmpdir(), 'repo-'));
-}
 
 test('Get missing blob raises NotFoundError', async () => {
   const repo = new DiskRepository(await tmpDir());
