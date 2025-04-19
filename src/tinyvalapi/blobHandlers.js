@@ -13,6 +13,11 @@ export function getBlobHandler(repo) {
   return async function (req, res) {
     const hash = req.params.hash
 
+    if (!isSha256Hexadecimal(hash)) {
+      writeErrorResponse(res, 400, 'Invalid hash format');
+      return;
+    }
+
     let stream, size
     try {
       ({ stream, size } = await repo.get(hash));
@@ -54,6 +59,11 @@ export function putBlobHandler(repo) {
   return async function (req, res) {
     const hash = req.params.hash
 
+    if (!isSha256Hexadecimal(hash)) {
+      writeErrorResponse(res, 400, 'Invalid hash format');
+      return;
+    }
+
     try {
       await repo.put(hash, req);
     } catch(err) {
@@ -74,4 +84,8 @@ export function putBlobHandler(repo) {
 function writeErrorResponse(res, statusCode, message) {
   res.writeHead(statusCode, {'Content-Type': 'text/plain'});
   res.end(message);
+}
+
+function isSha256Hexadecimal(hash) {
+  return /^[a-f0-9]{64}$/.test(hash)
 }

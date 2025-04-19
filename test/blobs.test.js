@@ -17,21 +17,15 @@ const EXAMPLE1_BLOB_SHA256_HASH = "bfb272e79d30466cf1af7c16739659e8b4e9b85b5075b
 test('GET /blobs/{hash} with invalid hash returns 400', async () => {
   const app = await makeTestApp();
 
-  const req = { method: 'GET', url: blobUrl('invalid-hash')};
-  const res = makeResponseRecorder();
+  const res = await getBlob(app, 'invalid-hash');
 
-  await app(req, res);
-
-  // assert.equal(res.statusCode, 400);
+  assert.equal(res.statusCode, 400);
 });
 
 test('GET unknown blob returns 404', async () => {
   const app = await makeTestApp();
 
-  const req = { method: 'GET', url: blobUrl(UNKNOWN_BLOB_SHA256_HASH)};
-  const res = makeResponseRecorder();
-
-  await app(req, res);
+  const res = await getBlob(app, UNKNOWN_BLOB_SHA256_HASH);
 
   assert.equal(res.statusCode, 404);
 });
