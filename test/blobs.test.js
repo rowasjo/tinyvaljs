@@ -1,18 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert';
 import { Readable } from 'node:stream';
-import crypto from 'node:crypto';
 
-import { makeApp } from '../src/tinyvalapi/app.js';
 import { makeResponseRecorder } from './utils/responserecorder.js'
 import { makeTestApp } from './utils/fixtures.js'
-
 
 const UNKNOWN_BLOB_SHA256_HASH  = "61a04a46afa3c518551c887c6c1b2b1e4f25619fad3032c3d5c952849b2ff9db";
 const EXAMPLE1_BLOB             = "I am a little blob.";
 const EXAMPLE1_BLOB_SHA256_HASH = "bfb272e79d30466cf1af7c16739659e8b4e9b85b5075bdb922806c55035497cf";
-
-
 
 test('GET /blobs/{hash} with invalid hash returns 400', async () => {
   const app = await makeTestApp();

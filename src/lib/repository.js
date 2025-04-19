@@ -52,43 +52,17 @@ export class DiskRepository {
    */
   async put(hash, src) {
     const finalPath = path.join(this.baseDir, hash);
-    
-    const tmpPath = path.join(
-      this.baseDir,
-      `tmp-${crypto.randomUUID()}`
-    )
-
-    const handle = await fs.promises.open(tmpPath, fs.constants.O_WRONLY | fs.constants.O_CREAT | fs.constants.O_EXCL, 0o600);
-    const tmpStream = handle.createWriteStream();
-
-    // Hash while streaming to disk
-    const hasher = crypto.createHash('sha256');
-
-    const hashTransform = new Transform({
-      transform(chunk, encoding, cb) {
-        hasher.update(chunk);
-        cb(null, chunk); // pass through unchanged
-      }
-    })
+    const tmpPath = path.join(this.baseDir, `tmp-${crypto.randomUUID()}`)
 
     try {
-      await pipeline(src, hashTransform, tmpStream);
+      await writeStreamWithHashValidation(src, hash, tmpPath);
 
-      const actual = hasher.digest('hex');
-
-      if (actual !== hash) {
-        throw new HashMismatchError(hash, actual);
-      }
-
-      // Flush file data + metadata to the device
-      const fh = await fs.promises.open(tmpPath, 'r');
-      await fh.sync();
-      await fh.close();
+      await syncFile(tmpPath);
 
       // Atomic rename: guarantees "all or nothing" visibility
       await fs.promises.rename(tmpPath, finalPath);
     } finally {
-      try { await fs.promises.unlink(tmpPath); } catch { /* ignore */ } 
+      cleanupTmpFile(tmpPath);
     }
   }
 
@@ -112,4 +86,41 @@ export class DiskRepository {
     const stream = fs.createReadStream(filePath)
     return { stream, size: stat.size };
   }
+}
+
+async function writeStreamWithHashValidation(src, expectedHash, destPath) {
+  const hasher = crypto.createHash('sha256');
+  const hashTransform = new Transform({
+    transform(chunk, encoding, cb) {
+      hasher.update(chunk);
+      cb(null, chunk); // pass through unchanged
+    }
+  });
+
+  const handle = await fs.promises.open(destPath, fs.constants.O_WRONLY | fs.constants.O_CREAT | fs.constants.O_EXCL, 0o600);
+  const tmpStream = handle.createWriteStream();
+
+  try {
+    await pipeline(src, hashTransform, tmpStream);
+    const actualHash = hasher.digest('hex');
+
+    if (actualHash !== expectedHash) {
+      throw new HashMismatchError(expectedHash, actualHash);
+    }
+  } finally {
+    await handle.close();
+  }
+}
+
+// Commit file contents and metadata to persistent storage
+async function syncFile(filePath) {
+  const handle = await fs.promises.open(filePath, 'r');
+  await handle.sync();
+  await handle.close();
+}
+
+async function cleanupTmpFile(tmpPath) {
+  try { 
+    await fs.promises.unlink(tmpPath); 
+  } catch { /* ignore */ } 
 }
