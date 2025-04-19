@@ -8,8 +8,6 @@ const __dirname = dirname(__filename);
 export const swaggeruiHtml = readFileSync(join(__dirname, 'swaggerui.html'), 'utf8');
 export const openapiYaml = readFileSync(join(__dirname, '../../openapi.yaml'), 'utf8');
 
-const headerContentType = 'Content-Type'
-
 export function openapiHandler(req, res) {
   res.writeHead(200, { headerContentType: 'application/json' })
   res.end(openapiYaml)
