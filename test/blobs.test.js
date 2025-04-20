@@ -33,7 +33,7 @@ test('PUT blob with hash mismatch returns 422', async() => {
   const res = makeResponseRecorder();
 
   await app(req, res);
-  
+
   assert.equal(res.statusCode, 422)
 });
 
@@ -98,10 +98,17 @@ function blobUrl(hash) {
   return `/blobs/${hash}`
 }
 
+
 function makePutBlobRequest(hash, body) {
-  return Object.assign(Readable.from(body), { 
-    method: 'PUT', 
-    url: blobUrl(hash),
-    headers: { 'Content-Type': 'application/octet-stream' },
-  });
+  const buf = Buffer.isBuffer(body) ? body : Buffer.from(body);
+  const req = Readable.from(buf);
+  
+  req.method = 'PUT';
+  req.url = blobUrl(hash);
+  req.headers = {
+    'content-type': 'application/octet-stream',
+    'content-length': buf.length.toString(),
+  };
+
+  return req;
 }

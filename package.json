@@ -12,6 +12,7 @@
         "node": ">=22.0.0"
     },
     "dependencies": {
+        "openapi-enforcer": "^1.23.0",
         "urlpattern-polyfill": "^10.0.0"
     }
 }

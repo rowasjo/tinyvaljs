@@ -1,4 +1,4 @@
-export function loggingMiddleware(handler) {
+export function loggingMiddleware(next) {
   return async (req, res) => {
 
     console.log("Request:", {
@@ -6,7 +6,7 @@ export function loggingMiddleware(handler) {
       path: req.url,
     });
 
-    await handler(req, res);
+    await next(req, res);
 
     console.log("Response", {
       method: req.method,
